@@ -58,7 +58,7 @@ def main():
             print(f"[INFO] Encoding {in_file} -> {out_file}")
             encode_file(model_file, in_file, out_file)
 
-    print("[DONE] SentencePiece models trained and applied")
+    print("[DONE]")
 
 if __name__ == "__main__":
     main()

@@ -1,32 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "[INFO] Setting up environment for NMT Hallucination project..."
+sudo apt-get update -y
+sudo apt-get install python3.9 python3.9-dev python3.9-distutils -y
+wget https://bootstrap.pypa.io/get-pip.py
+python3.9 get-pip.py
 
-# ===============================
-# 1. Cập nhật pip + công cụ cơ bản
-# ===============================
-pip install --upgrade wheel setuptools
+pip install pip==24.0
+python3.9 -m pip install torch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu116
+python3.9 -m pip install fairseq==0.12.2 sacremoses subword-nmt sentencepiece sacrebleu unbabel-comet==2.2.1 joblib tqdm matplotlib
+python3.9 -m pip install --upgrade "numpy<2" 
 
-# ===============================
-# 2. Cài torch phù hợp Colab
-# Colab thường đã có torch + cuda tương thích,
-# nếu muốn cố định phiên bản thì uncomment dòng bên dưới:
-# pip install torch==2.3.0 torchvision torchaudio
-# ===============================
-
-# ===============================
-# 3. Cài fairseq & các thư viện cần thiết
-# ===============================
-pip install fairseq==0.12.2
-
-# Metric & preprocessing
-pip install sacrebleu sentencepiece
-
-# COMET để đánh giá dịch máy
-pip install unbabel-comet==2.2.1
-
-# ML + xử lý dữ liệu
-pip install pandas numpy scikit-learn joblib tqdm matplotlib
-
-echo "[OK] Environment ready!"
+echo "[DONE]"
