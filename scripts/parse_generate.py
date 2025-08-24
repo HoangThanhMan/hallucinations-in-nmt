@@ -3,8 +3,7 @@
 import csv, argparse
 
 def parse_generate(gen_path, out_csv):
-    # Parse fairseq-generate output to CSV với các cột:
-    # id, src, ref, hyp, seq_logprob
+    # col: id, src, ref, hyp, seq_logprob
     S, T, H = {}, {}, {}
     with open(gen_path, "r", encoding="utf-8") as f:
         for line in f:

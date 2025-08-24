@@ -14,7 +14,7 @@ fairseq-generate data-bin \
     --remove-bpe=sentencepiece \
     --scoring sacrebleu > ${OUT}/generate.test.txt
 
-python scripts/05_parse_generate.py \
+python scripts/parse_generate.py \
     --gen ${OUT}/generate.test.txt \
     --out ${OUT}/generate.test.parsed.csv
 
