@@ -8,11 +8,21 @@ EXP=checkpoints
 OUT=outputs
 mkdir -p ${OUT}
 
-fairseq-generate data-bin \
+# fairseq-generate data-bin \
+#     --path ${EXP}/checkpoint_best.pt \
+#     --beam 5 --lenpen 1.0 --batch-size 128 \
+#     --remove-bpe=sentencepiece \
+#     --print-alignment \
+#     --scoring sacrebleu > ${OUT}/generate.test.txt
+
+fairseq-interactive data-bin \
     --path ${EXP}/checkpoint_best.pt \
     --beam 5 --lenpen 1.0 --batch-size 128 \
     --remove-bpe=sentencepiece \
-    --scoring sacrebleu > ${OUT}/generate.test.txt
+    --print-alignment \
+    --print-step \
+    --dump-attention \
+    < data/test.${SRC} > ${OUT}/generate.test.txt
 
 python scripts/parse_generate.py \
     --gen ${OUT}/generate.test.txt \

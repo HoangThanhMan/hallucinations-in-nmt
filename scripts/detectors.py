@@ -17,7 +17,7 @@ try:
 except Exception:
     download_model = load_from_checkpoint = None
 
-def top_ngram_count(text, n = 3):
+def top_ngram_count(text, n = 4):
     toks = text.split()
     if len(toks) < n:
         return ("", 0)
@@ -25,11 +25,10 @@ def top_ngram_count(text, n = 3):
     cnt = Counter(ngrams).most_common(1)[0]
     return cnt
 
-def repeated_targets_ratio(hyps):
+def repeated_targets(hyps):
     if not hyps:
-        return 0.0
-    unique = len(set(hyps))
-    return 1.0 - (unique / len(hyps))
+        return None
+    return dict(Counter(hyps))
 
 def chrf2(hyps, refs):
     if sacrebleu is None:
@@ -70,13 +69,13 @@ def attn_to_eos(attn, eos_index):
 def attn_ign_src(attn, threshold):
     if attn is None:
         return float("nan")
-    per_src = attn.sum(axis=0)  # [src_len]
+    per_src = attn.sum(axis=0)
     ign = (per_src < threshold).mean()
     return float(ign)
 
 def load_attentions(json_path):
     # JSON: list of {"attn": [[...], ...]} per sentence (tgt_len x src_len).
-    with open(json_path, "r", encoding="utf-8") as f:
+    with open(json_path, "r", encoding="utf-8-sig") as f:
         data = json.load(f)
     outs = []
     for item in data:
