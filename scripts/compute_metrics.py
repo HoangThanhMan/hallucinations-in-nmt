@@ -40,16 +40,19 @@ def select_examples(df, col, worst_k=250, tail_frac=0.004, tail_k=250, larger_is
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--parsed", required=True, help="CSV from parse_generate.py")
-    ap.add_argument("--out", required=True, help="Output hallucination dataset CSV")
-    ap.add_argument("--annot", default=None, help="Optional: annotated CSV with columns ['id','is_hallu']")
-    ap.add_argument("--tng_n", type=int, default=3)
-    ap.add_argument("--tng_thresh", type=int, default=3)
-    ap.add_argument("--seqlog_thresh", type=float, default=-5.0)
-    ap.add_argument("--comet_model", default=None, help="e.g., wmt20-comet-da or wmt20-comet-qe-da-v2")
+    ap.add_argument("--parsed", required=True)
+    ap.add_argument("--out", required=True)
+    ap.add_argument("--tng", action="store_true")
+    ap.add_argument("--tng_n", type=int, default=4)
+    ap.add_argument("--tng_thresh", type=int, default=2)
+    ap.add_argument("--rt", action="store_true")
+    ap.add_argument("--commet", action="store_true")
+    ap.add_argument("--comet_model", default="wmt20-comet-da", help="e.g., wmt20-comet-da or wmt20-comet-qe-da-v2")
     ap.add_argument("--comet_thresh", type=float, default=0.3)
-    ap.add_argument("--compute_chrf", action="store_true")
+    ap.add_argument("--chrf", action="store_true")
     ap.add_argument("--chrf_thresh", type=float, default=45.0)
+    ap.add_argument("--attn_to_eos", action="store_true")
+    ap.add_argument("--attn_ign_src", action="store_true")
     args = ap.parse_args()
 
     df = pd.read_csv(args.parsed)
@@ -97,18 +100,6 @@ def main():
             df["comet"] = np.nan
     else:
         df["comet"] = np.nan
-
-    # Merge human annotations nếu có
-    if args.annot and os.path.exists(args.annot):
-        ann = pd.read_csv(args.annot)
-        if set(["id","is_hallu"]).issubset(ann.columns):
-            df = df.merge(ann[["id","is_hallu"]], on="id", how="left")
-            df["label"] = df["is_hallu"]
-        else:
-            print("[WARN] Annotation file missing required columns; ignoring.")
-            df["label"] = np.nan
-    else:
-        df["label"] = np.nan
 
     metrics = {
         "comet": {"larger_is_worse": False},
